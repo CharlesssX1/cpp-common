@@ -62,7 +62,7 @@ private:
     std::string name_;
     std::string logDir_;
 
-    std::atomic<bool> initialized;
+    std::atomic<bool> initialized_;
     bool failureSignalHandlerInstalled_;
 };
 

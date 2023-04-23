@@ -26,11 +26,11 @@ std::unordered_map<BaseLog::LogLevel, spdlog::level::level_enum> levelMap = {
 
 namespace BaseLog {
 std::string GetLoggingFile(const std::string &dir, const std::string &name) {
-    std::string filename = name + "_" + std::to_string(getpid()) + ".log";
+    std::string fileName = name + "_" + std::to_string(getpid()) + ".log";
     if (dir.empty()) {
         return fileName;
     }
-    if (dir(dir.size() - 1) == "/") {
+    if (dir[dir.size() - 1] == '/') {
         return dir + fileName;
     }
     return dir + "/" + fileName;
@@ -65,7 +65,7 @@ void BaseLog::InitLogging(const std::string &name, LogLevel threshold, const std
     Instance().name_ = name;
     Instance().logDir_ = logDir;
 
-    if (spdlog::get(name)) != nullptr {
+    if (spdlog::get(name) != nullptr) {
         spdlog::drop(name);
     }
 
@@ -73,7 +73,7 @@ void BaseLog::InitLogging(const std::string &name, LogLevel threshold, const std
     auto level = static_cast<spdlog::level::level_enum>(threshold);
 
     if (!logDir.empty() && !name.empty()) {
-        auto loggingFile = GetLoggingFile(LogDir, name);
+        auto loggingFile = GetLoggingFile(logDir, name);
         auto fileLogger = std::make_shared<spdlog::sinks::rotating_file_sink_mt>(loggingFile, ROTATION_BYTES_SIZE, ROTATION_FILE_NUM);
         fileLogger->set_level(level);
         sinks.emplace_back(fileLogger);
@@ -86,7 +86,7 @@ void BaseLog::InitLogging(const std::string &name, LogLevel threshold, const std
 
     auto logger = std::make_shared<spdlog::logger>(Instance().name_, sinks.begin(), sinks.end());
     logger->set_level(level);
-    spflog::set_defult_logger(logger);
+    spdlog::set_default_logger(logger);
     Instance().initialized_ = true;
 }
 
@@ -112,7 +112,7 @@ void BaseLog::InstallFailureSignalHandler(const char *argv0, bool call_previous_
         if (spdlog::default_logger()) {
             spdlog::default_logger()->flush();
         }
-    }
+    };
     absl::InstallFailureSignalHandler(options);
     Instance().failureSignalHandlerInstalled_ = true;
 }
@@ -135,7 +135,7 @@ void BaseLog::UninstallSignalHandler() {
 
 void BaseLog::LogInternal(LogLevel level, const std::string &message) {
     if (initialized_) {
-        spdlog::get(name_)->log(spflog::source_loc{__FILE__, __LINE__, __FUNCTION__}, levelMap[level], message);
+        spdlog::get(name_)->log(spdlog::source_loc{__FILE__, __LINE__, __FUNCTION__}, levelMap[level], message);
         return;
     }
     auto logger = DefaultLogger::Instance().GetDefaultLogger();

@@ -1,6 +1,6 @@
 option(WITHOUT_CONSOLE_LOGGER "enable console logger or not" OFF)
 include_directories(
-        ${SPDLOG_INCLDUE_DIR}
+        ${SPDLOG_INCLUDE_DIR}
         ${ABSEIL_INCLUDE_DIR}
 )
 
@@ -15,7 +15,7 @@ target_link_libraries(baselog
         absl_failure_signal_handler
         absl_examine_stack
         absl_stacktrace)
-add_dependencies(baselog ABSEIL APDLOG)
+add_dependencies(baselog ABSEIL SPDLOG)
 
 if (WITHOUT_CONSOLE_LOGGER)
     target_compile_definitions(baselog PRIVARE WITHOUT_CONSOLE_LOGGER)

@@ -5,4 +5,4 @@ include_directories(
 link_directories(${ABSEIL_LIB_DIR})
 
 add_executable(common-log-example ${CMAKE_CURRENT_SOURCE_DIR}/main.cpp)
-target_link_directories(common-log-example baselog)
+target_link_libraries(common-log-example baselog)
